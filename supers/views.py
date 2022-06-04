@@ -10,8 +10,12 @@ from supers import serializers
 def super_list(request):
 
     if request.method == 'GET':
-        super = Super.objects.all()
-        serializer = SuperSerializer(super, many=True)
+        type_name = request.query_params.get('type')
+        print(type_name)
+        queryset = Super.objects.all()
+        if type_name:
+            queryset = queryset.filter(super_type__type=type_name)
+        serializer = SuperSerializer(queryset, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         serializer = SuperSerializer(data=request.data)
